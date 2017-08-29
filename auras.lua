@@ -23,19 +23,13 @@ function mod:SetAura(aura, index, name, icon, count, duration, expirationTime, s
 	aura.name = name
 	aura.spellID = spellID
 	aura.expirationTime = expirationTime
-	local nameplatesFont = LSM:Fetch("font", E.db['nameplates'].font)
-	local nameplatesFontOutline = E.db['nameplates'].fontOutline
-	local nameplatesfontSize = aura.cooldown.SizeOverride --E.db['nameplates'].fontSize
-	
 	if ( count > 1 ) then
 		local countText = count;
-		--[[if ( count >= 10 ) then
+		if ( count >= 10 ) then
 			countText = BUFF_STACKS_OVERFLOW;
 		end
-		]]
 		aura.count:Show();
 		aura.count:SetText(countText);
-		aura.count:SetFont(nameplatesFont, nameplatesfontSize, nameplatesFontOutline);
 	else
 		aura.count:Hide();
 	end
@@ -43,8 +37,6 @@ function mod:SetAura(aura, index, name, icon, count, duration, expirationTime, s
 	if ( expirationTime and expirationTime ~= 0 ) then
 		local startTime = expirationTime - duration;
 		aura.cooldown:SetCooldown(startTime, duration);
-		aura.cooldown.timer.text:SetFont(nameplatesFont, nameplatesfontSize, nameplatesFontOutline);
-		aura.cooldown.timer.text:Point('TOPLEFT', 1, 1);
 		aura.cooldown:Show();
 	else
 		aura.cooldown:Hide();
@@ -209,14 +201,13 @@ function mod:CreateAuraIcon(parent)
 	aura.cooldown = CreateFrame("Cooldown", nil, aura, "CooldownFrameTemplate")
 	aura.cooldown:SetAllPoints(aura)
 	aura.cooldown:SetReverse(true)
-	aura.cooldown.SizeOverride = 26 --E.db['nameplates'].fontSize
+	aura.cooldown.SizeOverride = 10
 	E:RegisterCooldown(aura.cooldown)
 
 	aura.count = aura:CreateFontString(nil, "OVERLAY")
+	aura.count:SetPoint("BOTTOMRIGHT")
+	aura.count:SetFont(LSM:Fetch("font", self.db.font), self.db.fontSize, self.db.fontOutline)
 
-	aura.count:SetPoint("BOTTOMRIGHT", 1, -2)
-	aura.count:SetFont(LSM:Fetch("font", E.db['nameplates'].font), aura.cooldown.SizeOverride, E.db['nameplates'].fontOutline)
-	
 	return aura
 end
 
